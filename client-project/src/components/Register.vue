@@ -7,16 +7,19 @@
             <h4 style="text-align:center"><b>Sign Up</b> </h4>
             <div class="row">
               <div class="input-field col s12" style="padding-right:15px;">
-                <input id="fullname" type="text" class="validate">
+                <input id="fullname" type="text" v-model="fullname" v-validate="'required'" name="fullname">
                 <label for="fullname">Full Name</label>
+                <span class="helper-text">{{ errors.first('fullname') }}</span>
               </div>
               <div class="input-field col s12" style="padding-right:15px;">
-                <input id="email" type="text" class="validate">
+                <input id="email" type="email" v-model="email" v-validate="'required|email'" name="email">
                 <label for="email">Email</label>
+                <span class="helper-text">{{ errors.first('email') }}</span>
               </div>
               <div class="input-field col s12" style="padding-right:15px;">
-                <input id="password" type="text" class="validate">
+                <input id="password" v-model="password" v-validate="'required|min:6'" type="password" name="password">
                 <label for="password">Password</label>
+                <span class="helper-text">{{ errors.first('password') }}</span>
               </div>
               <div class="input-field col s12" style="padding-right:15px;">
                 <input id="confirmpassword" type="text" class="validate">
@@ -63,7 +66,9 @@ export default {
   },
   data () {
     return {
-
+      fullname: '',
+      email: '',
+      password: ''
     }
   },
   methods: {
@@ -120,5 +125,8 @@ export default {
   background-size: cover;
   padding-top: 10px;
   height: 100%;
+}
+.helper-text {
+  color: red;
 }
 </style>

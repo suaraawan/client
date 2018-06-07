@@ -7,12 +7,14 @@
           <h4 style="text-align:left"> <b>Sign In</b> </h4>
           <div class="row">
             <div class="input-field col s12" style="padding-right:15px;">
-              <input id="email" type="email" class="validate" v-model='email'>
+              <input id="email" type="email" v-model="email" v-validate="'required|email'" name="email">
               <label for="email">Email</label>
+              <span class="helper-text">{{ errors.first('email') }}</span>
             </div>
             <div class="input-field col s12" style="padding-right:15px;">
-              <input id="password" type="password" class="validate" v-model='password'>
+              <input id="password" v-model="password" v-validate="'required|min:6'" type="password" name="password">
               <label for="password">Password</label>
+              <span class="helper-text">{{ errors.first('password') }}</span>
             </div>
           </div>
           <a class="btn btn-block" style="width:100%; color:white" @click='login'>Sign In</a>
@@ -200,5 +202,9 @@ li{
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
+}
+
+.helper-text {
+  color: red;
 }
 </style>
