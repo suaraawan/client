@@ -26,7 +26,7 @@
                 <label for="confirmpassword">Confirm Password</label>
               </div>
             </div>
-            <a class="btn btn-block">Sign Up</a>
+            <a class="btn btn-block" @click='signUp'>Sign Up</a>
             <br>
             <p>Already have an account? <a @click='backToHomepage' style="cursor: pointer;"><u>Sign In here</u></a> </p>
           </form>
@@ -72,48 +72,25 @@ export default {
     }
   },
   methods: {
-    backToHomepage () {
-      this.$router.push('/')
-    },
-    onSignInSuccess (googleUser) {
-      // google login
-      const profile = googleUser.getBasicProfile()
-      const userData = {
-        google_id: profile.getId(),
-        username: profile.getName(),
-        user_image: profile.getImageUrl(),
-        email: profile.getEmail()
+    signUp (event) {
+      event.preventDefault()
+      const newUser = {
+        fullname: this.fullname,
+        email: this.email,
+        password: this.password
       }
       axios({
         method: 'post',
-        url: 'http://localhost:3000/users/loginGoogle',
-        data: userData
-      }).then((response) => {
-        console.log('login success')
-      }).catch((err) => {
-        console.log(err)
+        url: 'http://localhost:3000/users/signup',
+        data: newUser
+      }).then(response => {
+        console.log('success register');
+      }).catch(err => {
+        console.log(err);
       })
     },
-    onSignInError (error) {
-      console.log('OH NOES', error)
-    },
-    loginfb () {
-      // fb login
-      window.FB.login((response) => {
-        if (response.status === 'connected') {
-          localStorage.setItem('fb_access_token', response.authResponse.accessToken)
-          // axios({
-          //   method: 'post',
-          //   url: 'http://localhost:3000/users/loginFb',
-          //   headers: { fb_access_token: localStorage.getItem('fb_access_token') }
-          // }).then((response) => {
-          //   console.log('Welcome!  Fetching your information.... ')
-          //   localStorage.setItem('token', response.data.token)
-          // }).catch((err) => {
-          //   console.log(err)
-          // })
-        }
-      })
+    backToHomepage () {
+      this.$router.push('/')
     }
   }
 }
