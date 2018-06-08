@@ -1,18 +1,18 @@
 <template>
   <div class="home">
       <Header/>
-      <Music/>
+      <User/>
   </div>
 </template>
 
 <script>
-import Music from '@/components/Musicpage.vue'
+import User from '@/components/User.vue'
 import Header from '@/components/Header.vue'
 
 export default {
   name: 'music',
   components: {
-    Music,
+    User,
     Header
   }
 }

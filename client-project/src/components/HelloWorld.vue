@@ -2,7 +2,7 @@
   <div class="hello"  style="height:100%;">
 
     <div class="row">
-      <div class="col s4" style="margin:3.3% 0 0 60%;">
+      <div class="col s4" style="margin:8.2% 0 0 60%;">
         <form class="col s12">
           <h4 style="text-align:left"> <b>Sign In</b> </h4>
           <div class="row">
@@ -18,8 +18,12 @@
             </div>
           </div>
           <a class="btn btn-block" style="width:100%; color:white" @click='login'>Sign In</a>
-          <p>or Sign In with :</p>
-          <a class="btn btn-block socmed" style="background-color:#3867d6; font-size:15px;" @click="loginfb">Sign In with facebook</a>
+          <p style="color:black">or Sign In with :</p>
+          <a class="btn btn-block" style="background-color:#3867d6; font-size:15px;" @click="loginfb">Sign In with facebook</a>
+          <br>
+          <div class="container" style="margin-bottom:66px; color:black">
+            New User?<a href="#" class="socmed" style="color:blue" @click='goToRegister'> <b> Start here.</b> </a>
+          </div>
         </form>
       </div>
     </div>
@@ -28,12 +32,13 @@
 </template>
 
 <script>
+import axios from 'axios'
 
 export default {
   name: 'Homepage',
   created () {
     if (localStorage.hasOwnProperty('authorization')) {
-      // this.$router.push('/todo')
+      this.$router.push('music')
     } else {
       (function (d, s, id) {
         var js
@@ -57,49 +62,26 @@ export default {
   data () {
     return {
       email: '',
-      password: '',
-      googleSignInParams: {
-        client_id: '108913565945-7db24779940ae01k701aniiue3cmj5se.apps.googleusercontent.com'
-      }
+      password: ''
     }
   },
   methods: {
     login () {
-      // manual login
       const UserData = {
         email: this.email,
         password: this.password
       }
-      // axios({
-      //   method: 'post',
-      //   url: 'http://localhost:3000/users/login',
-      //   data: UserData
-      // }).then((response) => {
-      //   const token = JSON.stringify(response.data.jwtToken)
-      //   localStorage.setItem('authorization', token);
-      //   this.$router.push('/todo')
-      //   this.email = ''
-      //   this.password = ''
-      // }).catch((err) => {
-      //   console.log(err)
-      // })
-      console.log(UserData);
-    },
-    onSignInSuccess (googleUser) {
-      // google login
-      const profile = googleUser.getBasicProfile()
-      const userData = {
-        google_id: profile.getId(),
-        username: profile.getName(),
-        user_image: profile.getImageUrl(),
-        email: profile.getEmail()
-      }
+
       axios({
         method: 'post',
-        url: 'http://localhost:3000/users/loginGoogle',
-        data: userData
+        url: 'http://localhost:3000/users/signin',
+        data: UserData
       }).then((response) => {
-        console.log('login success')
+        const token = response.data.jwtToken
+        localStorage.setItem('authorization', token);
+        this.$router.push('music')
+        this.email = ''
+        this.password = ''
       }).catch((err) => {
         console.log(err)
       })
@@ -108,23 +90,51 @@ export default {
       console.log('OH NOES', error)
     },
     loginfb () {
-      // fb login
+      let self = this
       window.FB.login((response) => {
         if (response.status === 'connected') {
-          localStorage.setItem('fb_access_token', response.authResponse.accessToken)
-          // axios({
-          //   method: 'post',
-          //   url: 'http://localhost:3000/users/loginFb',
-          //   headers: { fb_access_token: localStorage.getItem('fb_access_token') }
-          // }).then((response) => {
-          //   console.log('Welcome!  Fetching your information.... ')
-          //   localStorage.setItem('token', response.data.token)
-          // }).catch((err) => {
-          //   console.log(err)
-          // })
-          console.log(response);
+          FB.api(`/me`, {
+              fields: ['email', 'picture', 'name']
+          }, function (profile) {
+            axios({
+              method: 'post',
+              url: 'http://localhost:3000/users/signin',
+              headers: profile
+            }).then((response) => {
+              console.log('Welcome!  Fetching your information.... ')
+              console.log(response.data.jwtToken);
+              localStorage.setItem('authorization', response.data.jwtToken)
+              self.$router.push('music')
+            }).catch((err) => {
+              console.log(err)
+            })
+          })
         }
       })
+    },
+    goToRegister () {
+      this.$router.push('register')
+    },
+    statusChangeCallback(response) {
+      let self = this
+      FB.api(`/me`, {
+          fields: ['email', 'picture', 'name']
+      }, function (profile) {
+        axios({
+          method: 'post',
+          url: 'http://localhost:3000/users/signin',
+          headers: profile
+        }).then((response) => {
+          console.log('Welcome!  Fetching your information.... ')
+          return response
+        }).catch((err) => {
+          console.log(err)
+        })
+      })
+    },
+    tes () {
+      // this.$router.push('music')
+      console.log('tes');
     }
   }
 }
@@ -158,7 +168,6 @@ nav {
   height:39px;
   width: 100%;
   text-align: center;
-  font-size: 50px;
   margin:0 0 27.5% 0;
 }
 li{

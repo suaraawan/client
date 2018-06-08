@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import About from './views/About.vue'
 import Register from './views/Register.vue'
 import Music from './views/Music.vue'
+import User from './views/User.vue'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/music',
       name: 'music',
       component: Music
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: User
     }
   ]
 })
